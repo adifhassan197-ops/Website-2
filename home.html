@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tanvir's Dynamic YouTube Website</title>
+    <style>
+        /* CSS: Layout & Design */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            transition: background 0.8s ease, color 0.5s ease;
+        }
+
+        /* YouTube Background Container */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            display: none; 
+        }
+        
+        /* YouTube Frame Responsive Style */
+        .video-background iframe {
+            width: 100vw;
+            height: 56.25vw;
+            min-height: 100vh;
+            min-width: 177.77vh;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .clock-container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1;
+        }
+        
+        h1 { 
+            font-size: 3rem; 
+            margin: 0 0 10px 0; 
+            color: #f1c40f; 
+        }
+        #clock { font-size: 2.8rem; font-weight: bold; font-family: monospace; margin-bottom: 20px; }
+        
+        /* Dropdown design */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            background-color: #e74c3c;
+            color: white;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .dropbtn:hover { background-color: #c0392b; transform: translateY(-2px); }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
+            border-radius: 8px;
+            z-index: 2;
+            margin-top: 5px;
+            overflow: hidden;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .dropdown-content button {
+            color: #2c3e50;
+            padding: 12px 16px;
+            display: block;
+            width: 100%;
+            border: none;
+            background: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .dropdown-content button:hover { background-color: #f1f2f6; }
+        .show { display: block; animation: fadeIn 0.3s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -10px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        .theme-dark { background-color: #2c3e50; color: white; }
+        .theme-purple { background-color: #6c5ce7; color: white; }
+        .theme-sunset { background: linear-gradient(135deg, #ea2027, #ee5a24); color: white; }
+        .theme-video { background: black; } 
+    </style>
+</head>
+<body class="theme-dark">
+
+    <div id="youtube-bg" class="video-background">
+        <iframe id="yt-player" src="https://www.youtube.com/embed/9S_wH50G8iE?autoplay=1&mute=1&loop=1&playlist=9S_wH50G8iE&controls=0&showinfo=0&rel=0&iv_load_policy=3" frameborder="0" allow="autoplay; encrypted-media"></iframe>
+    </div>
+
+    <div class="clock-container">
+        <h1 id="main-heading">HELLO TANVIR</h1>
+        <p>Choose a theme from the dropdown menu.</p>
+        <div id="clock">00:00:00 PM</div>
+        
+        <div class="dropdown">
+            <button onclick="toggleDropdown()" class="dropbtn">Change Theme ▾</button>
+            <div id="myDropdown" class="dropdown-content">
+                <button onclick="changeTheme('theme-video')">🎬 YouTube Theme</button>
+                <button onclick="changeTheme('theme-dark')">🌌 Dark Blue</button>
+                <button onclick="changeTheme('theme-purple')">🔮 Neon Purple</button>
+                <button onclick="changeTheme('theme-sunset')">🌅 Sunset Glow</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ১. Live Clock
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ২. Dropdown Toggle
+        function toggleDropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // ৩. Voice Logic (১ বার বলবে)
+        let hasSpoken = false; 
+
+        function speakHelloTanvir() {
+            if (!hasSpoken) {
+                window.speechSynthesis.cancel(); 
+                let speech = new SpeechSynthesisUtterance();
+                speech.text = "Hello Tanvir";
+                speech.volume = 1; 
+                speech.rate = 0.9;  
+                speech.pitch = 1;  
+                window.speechSynthesis.speak(speech);
+                
+                hasSpoken = true; 
+            }
+        }
+
+        // ৪. Change Theme Function
+        function changeTheme(themeName) {
+            const ytBg = document.getElementById("youtube-bg");
+            
+            document.body.className = '';
+            document.body.classList.add(themeName);
+            
+            if (themeName === 'theme-video') {
+                ytBg.style.display = "block";
+            } else {
+                ytBg.style.display = "none";
+            }
+            
+            document.getElementById("myDropdown").classList.remove("show");
+        }
+
+        // প্রথম ক্লিকে ভয়েস হবে
+        window.addEventListener('click', function() {
+            speakHelloTanvir();
+        });
+
+        // ড্রপডাউন বন্ধ করার লজিক
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
